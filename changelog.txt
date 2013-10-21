@@ -1,0 +1,6 @@
+1.1
+- Lightbox: load next page at end
+- Added lightbox hotkeys tutorial
+
+1.0
+Initial release
