@@ -1,3 +1,14 @@
+1.2
+- moved button to other place due to CRC changes on main bar (overflow issue)
+- added more advanced dropdown menu
+ - enable/disable lightbox
+ - include/exclude spoilers
+ - "zoom" images (always 50% of screen size, only good for large resolutions)
+ - resize big images
+ - user definied background (css background property, you can put here even unicorns if you want)
+ - enable/disable last page reminder
+ - reset hotkey tutorial
+
 1.1
 - Lightbox: load next page at end
 - Added lightbox hotkeys tutorial
