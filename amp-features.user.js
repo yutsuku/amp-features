@@ -2,8 +2,8 @@
 // @name        /AMP/ features
 // @description An UserJS to make browsing this specific topic easier, at least for me.
 // @author      moh aka Yutsuku
-// @version     1.3.2
-// @include     https://www.crunchyroll.com/forumtopic-647851*
+// @version     1.3.3
+// @match     https://www.crunchyroll.com/forumtopic-647851*
 // @updateURL   https://raw.githubusercontent.com/yutsuku/amp-features/master/amp-features.user.js
 // @downloadURL https://raw.githubusercontent.com/yutsuku/amp-features/master/amp-features.user.js
 // ==/UserScript==
@@ -126,6 +126,10 @@ function attachTutorial(hook) {
 	buttonEsc.className="hotkey";
 	buttonEsc.innerHTML = "Esc";
 
+	var buttonG = document.createElement("div");
+	buttonG.className="hotkey";
+	buttonG.innerHTML = "g";
+
 	var p = document.createElement("p");
 	p.appendChild(buttonLeft);
 	p.innerHTML += "Previous Image";
@@ -134,6 +138,11 @@ function attachTutorial(hook) {
 	p = document.createElement("p");
 	p.appendChild(buttonRight);
 	p.innerHTML += "Next Image";
+	block.appendChild(p);
+
+	p = document.createElement("p");
+	p.appendChild(buttonG);
+	p.innerHTML += "Reopen gallery view";
 	block.appendChild(p);
 
 	p = document.createElement("p");
@@ -148,7 +157,7 @@ function EasyNavigation() {
 
 	var images;
 	var overlayImages;
-	var imagesPos;
+	var imagesPos = 0;
 	var nextPage;
 
     if ( $(".showforumtopic-paginator a[title=\"Next\"]").length > 0 ) {
@@ -180,7 +189,7 @@ function EasyNavigation() {
 			images = $(".showforumtopic-message-contents-text > .bb-image");
 		}
 		//console.log("EasyNavigation(): found " + images.length + " images");
-		imagesPos = 0;
+		//imagesPos = 0;
 		CreateOverlay();
 	}
 
@@ -369,12 +378,13 @@ function EasyNavigation() {
 				e.preventDefault();
 				return;
 			}
-			($("#overlay")).parentNode.removeChild(this);
+			($("#overlay")).remove();
 		}, false);
 
 		var overlay_content = document.createElement("div");
 		overlay_content.id = "overlay_content";
 		var overlay_element
+
 		for(var i=0;i<images.length;++i) {
 			overlay_element = document.createElement("div");
 			overlay_element.id = "overlay_element_" + i;
@@ -396,16 +406,12 @@ function EasyNavigation() {
 		document.body.appendChild(overlay);
 		overlayImages = $("#overlay_content .overlayElement");
 
-		console.log("DEBUG tutorialShown:");
-		console.log(tutorialShown);
-
-		console.log("DEBUG tutorialShown.localStorage:");
-		console.log(localStorage.getItem("ligthboxTutorialShown"));
-
 		if ( tutorialShown == "false" ) {
 			localStorage.setItem("ligthboxTutorialShown", "true");
 			attachTutorial(overlay);
 		}
+
+        Rewind();
 	}
 	/* END OF OVERLAY */
 
@@ -413,7 +419,6 @@ function EasyNavigation() {
 		// DO NOT "RETURN FALSE" HERE!
 		// IT MAY FUCK UP BROWSER SCROLLING!
 		e = e || window.event;
-		//console.log(e);
 
 		if (e.keyCode == '37') {
 			// left arrow
@@ -430,10 +435,31 @@ function EasyNavigation() {
 		else if (e.keyCode == '27') {
 			// Escape
 			if ( $("#overlay") ) {
-				($("#overlay")).parentNode.removeChild(this);
+				($("#overlay")).remove();
 			}
 		}
+        // g
+        if (document.activeElement.tagName.toLowerCase() !== 'input' &&
+            e.keyCode == '71' &&
+            !$("#overlay")
+        ) {
+            ShowOverlay();
+        }
 	}
+
+    function ToViewport(element) {
+        element.scrollIntoView();
+    }
+
+    function Rewind() {
+        if ( imagesPos <= 0 ) {
+			return false;
+		}
+
+        overlayImages[0].classList.add("hidden");
+		overlayImages[imagesPos].classList.remove("hidden");
+		$("#overlay_text").innerHTML = imagesPos+1 + " / " + overlayImages.length;
+    }
 
 	function ShowNext() {
 		if ( imagesPos >= images.length-1 ) {
@@ -446,6 +472,7 @@ function EasyNavigation() {
 		++imagesPos;
 		overlayImages[imagesPos].classList.remove("hidden");
 		$("#overlay_text").innerHTML = imagesPos+1 + " / " + overlayImages.length;
+        ToViewport(images[imagesPos]);
 	}
 
 	function ShowPrevious() {
@@ -456,6 +483,7 @@ function EasyNavigation() {
 		--imagesPos;
 		overlayImages[imagesPos].classList.remove("hidden");
 		$("#overlay_text").innerHTML = imagesPos+1 + " / " + overlayImages.length;
+        ToViewport(images[imagesPos]);
 	}
 
 }
