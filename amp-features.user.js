@@ -2,7 +2,7 @@
 // @name        /AMP/ features
 // @description An UserJS to make browsing this specific topic easier, at least for me.
 // @author      moh aka Yutsuku
-// @version     1.3.4
+// @version     1.3.5
 // @match     https://www.crunchyroll.com/forumtopic-647851*
 // @updateURL   https://raw.githubusercontent.com/yutsuku/amp-features/master/amp-features.user.js
 // @downloadURL https://raw.githubusercontent.com/yutsuku/amp-features/master/amp-features.user.js
@@ -159,7 +159,6 @@ function EasyNavigation() {
 	var overlayImages;
 	var imagesPos = 0;
 	var nextPage;
-    var seen = [];
 
     if ( $(".showforumtopic-paginator a[title=\"Next\"]").length > 0 ) {
         nextPage = $(".showforumtopic-paginator a[title=\"Next\"]")[0].href;
@@ -183,6 +182,7 @@ function EasyNavigation() {
 	}
 
 	function ShowOverlay() {
+        var seen = [];
 		document.onkeydown = checkKey;
 		if ( settings["lightbox-spoilers"] == "true" ) {
 			images = $(".bb-image");
